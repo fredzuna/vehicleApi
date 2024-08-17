@@ -20,8 +20,19 @@ namespace VehicleApi.Controllers
         [HttpPost("calculate-price")]
         public ActionResult CalculateVehiclePrice([FromBody] VehicleBasePriceDto vehiclePrice)
         {
-            var vehicleTotalPrice = _vehicleService.GetCalculateVehiclePrice(vehiclePrice);
-            return Ok(vehicleTotalPrice);
-        }       
+            try
+            {
+                var vehicleTotalPrice = _vehicleService.GetCalculateVehiclePrice(vehiclePrice);
+                return Ok(vehicleTotalPrice);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An internal server error occurred. Please try again later. " + ex.Message);
+            }
+        }
     }
 }
