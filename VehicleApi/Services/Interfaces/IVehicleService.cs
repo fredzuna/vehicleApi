@@ -1,14 +1,9 @@
-using YourNamespace.Models;
-using System.Collections.Generic;
+using VehicleApi.Dtos;
 
-namespace YourNamespace.Services
+namespace VehicleApi.Services
 {
     public interface IVehicleService
     {
-        IEnumerable<VehicleFee> GetVehicleFees();
-        VehicleFee GetVehicleFeeById(int id);
-        void CreateVehicleFee(VehicleFee vehicleFee);
-        void UpdateVehicleFee(int id, VehicleFee vehicleFee);
-        void DeleteVehicleFee(int id);
+        VehicleTotalPriceDto GetCalculateVehiclePrice(VehicleBasePriceDto vehiclePrice);
     }
 }
