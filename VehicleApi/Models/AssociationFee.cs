@@ -3,14 +3,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VehicleApi.Models
 {
-    public class VehicleFee
+    public class AssociationFee
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public required VehicleTypeEnum Type { get; set; }
-        public decimal SpecialFeePercentage { get; set; }
-        public decimal StorageFee { get; set; }
-        public BasicBuyerFee? BasicBuyerFee { get; set; }
+        public decimal Amount { get; set; }
+        public decimal StartAmount { get; set; }
+        public decimal? EndAmount { get; set; }
+        public int Order { get; set; }
     }
 }
