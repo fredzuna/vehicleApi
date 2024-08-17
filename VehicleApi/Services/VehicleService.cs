@@ -26,35 +26,29 @@ namespace VehicleApi.Services
                     .Include(fee => fee.BasicBuyerFee)
                     .FirstOrDefault(fee => fee.Type == vehicleFee.Type);
 
-                var associationFees = _context.AssociationFees.OrderBy(association => association.Order).ToList();
-
-                if (fee == null || fee.BasicBuyerFee == null)
+                if (fee == null)
                 {
                     _logger.LogWarning("No fee found for vehicle type: {VehicleType}", vehicleFee.Type);
                     throw new Exception($"No fee found for vehicle type: {vehicleFee.Type}");
                 }
 
-                var basePrice = vehicleFee.BasePrice;
-                var basicBuyerPrice = fee.BasicBuyerFee.CalculateBasicBuyerPrice(basePrice);
-                var specialPrice = basePrice * (fee.SpecialFeePercentage / 100);
-                var associationPrice = GetAssociationPrice(basePrice, associationFees);
-                var storagePrice = fee.StorageFee;
+                if (fee.BasicBuyerFee == null)
+                {
+                    _logger.LogWarning("BasicBuyerFee is null for vehicle type: {VehicleType}", vehicleFee.Type);
+                    throw new Exception("BasicBuyerFee is not configured.");
+                }
 
-                var totalPrice = basePrice + basicBuyerPrice + specialPrice + associationPrice + storagePrice;
+                var associationFees = _context.AssociationFees.OrderBy(a => a.Order).ToList();
+                var calculator = new VehicleFeeCalculator(fee, fee.BasicBuyerFee, associationFees);
 
-                var vehicleTotalPrice = new VehicleTotalPriceDto
+                var totalPrice = calculator.CalculateTotalPrice(vehicleFee.BasePrice);
+                var vehicleCharges = calculator.GetVehicleCharges(vehicleFee.BasePrice);
+
+                return new VehicleTotalPriceDto
                 {
                     TotalPrice = totalPrice,
-                    VehicleCharges = new VehicleChargesDto
-                    {
-                        Basic = basicBuyerPrice,
-                        Special = specialPrice,
-                        Association = associationPrice,
-                        Storage = storagePrice
-                    }
+                    VehicleCharges = vehicleCharges
                 };
-
-                return vehicleTotalPrice;
             }
             catch (Exception ex)
             {
@@ -62,20 +56,5 @@ namespace VehicleApi.Services
                 throw new Exception("An error occurred while processing your request.");
             }
         }
-
-        public decimal GetAssociationPrice(decimal basePrice, List<AssociationFee> associationFees)
-        {
-            foreach (var fee in associationFees)
-            {
-                if (basePrice >= fee.StartAmount &&
-                    (fee.EndAmount == null || basePrice <= fee.EndAmount.Value))
-                {
-                    return fee.Amount;
-                }
-            }
-
-            return 0;
-        }
-
     }
 }
