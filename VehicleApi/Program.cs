@@ -1,12 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using YourNamespace.Data;
-using YourNamespace.Services;
+using VehicleApi.Data;
+using VehicleApi.Services;
 var builder = WebApplication.CreateBuilder(args);
 
-// Register services here
 builder.Services.AddScoped<IVehicleService, VehicleService>();
 
-// Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -16,14 +14,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 var app = builder.Build();
 
-// Ensure the database is created
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        context.Database.EnsureCreated(); // Ensure the database schema is created
+    context.Database.EnsureCreated(); // Ensure the database schema is created
 }
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
