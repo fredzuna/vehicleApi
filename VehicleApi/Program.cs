@@ -3,6 +3,18 @@ using VehicleApi.Data;
 using VehicleApi.Services;
 var builder = WebApplication.CreateBuilder(args);
 
+// Add CORS services
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost5173",
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:5173")
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+});
+
 builder.Services.AddScoped<IVehicleService, VehicleService>();
 
 builder.Services.AddControllers();
@@ -26,6 +38,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Apply the CORS policy
+app.UseCors("AllowLocalhost5173");
 
 app.UseHttpsRedirection();
 
