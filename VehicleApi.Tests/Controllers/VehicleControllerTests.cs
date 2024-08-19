@@ -1,10 +1,8 @@
-using Xunit;
 using Moq;
 using Microsoft.AspNetCore.Mvc;
 using VehicleApi.Controllers;
 using VehicleApi.Services;
 using VehicleApi.Dtos;
-using System;
 using VehicleApi.Models;
 
 namespace VehicleApi.Tests.Controllers

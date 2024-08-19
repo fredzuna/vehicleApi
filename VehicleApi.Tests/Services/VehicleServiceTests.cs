@@ -1,10 +1,6 @@
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Xunit;
 using VehicleApi.Data;
 using VehicleApi.Dtos;
 using VehicleApi.Models;
